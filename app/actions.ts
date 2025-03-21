@@ -8,6 +8,9 @@ import { redirect } from "next/navigation";
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
+  const nombre = formData.get("nombre")?.toString();
+  const apellido = formData.get("apellidos")?.toString();
+
   const supabase = await createClient();
   const origin = (await headers()).get("origin");
 
@@ -19,11 +22,23 @@ export const signUpAction = async (formData: FormData) => {
     );
   }
 
+  if (!nombre || !apellido) {
+    return encodedRedirect(
+      "error",
+      "/sign-up",
+      "Nombre, Apellido son requeridos"
+    );
+  }
+
   const { error } = await supabase.auth.signUp({
     email,
     password,
     options: {
       emailRedirectTo: `${origin}/auth/callback`,
+      data: {
+        nombre: nombre,
+        apellidos: apellido,
+      },
     },
   });
 
@@ -31,6 +46,7 @@ export const signUpAction = async (formData: FormData) => {
     console.error(error.code + " " + error.message);
     return encodedRedirect("error", "/sign-up", error.message);
   } else {
+    console.log();
     return encodedRedirect(
       "success",
       "/sign-up",
@@ -132,3 +148,32 @@ export const signOutAction = async () => {
   await supabase.auth.signOut();
   return redirect("/");
 };
+
+export const fetchUserAction = async () => {
+  const supabase = await createClient();
+  const { data: user, error } = await supabase.auth.getUser();
+
+  if (error || !user) {
+    console.error(error?.message || "User not found");
+    return encodedRedirect(
+      "error",
+      "/sign-in",
+      "Failed to fetch user information"
+    );
+  }
+
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", user.user.id)
+    .single();
+
+  if (profileError) {
+    console.error(profileError.message);
+    return encodedRedirect("error", "/", "Failed to fetch user profile");
+  }
+
+  return profile;
+};
+
+export const insertTripAction = async (formData: FormData) => {};
