@@ -1,7 +1,8 @@
 import HeaderAuth from "@/components/header-auth";
-import { ThemeSwitcher } from "@/components/theme-switcher";
+import FeaturesHeader from "@/components/features-header";
 import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
+
 import Link from "next/link";
 import "./globals.css";
 
@@ -34,20 +35,15 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <main className="min-h-screen flex flex-col items-center">
-            <div className="flex-1 w-full flex flex-col gap-20 items-center">
-              <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
-                <div className="w-full flex justify-end items-center p-3 px-5 gap-5 text-sm">
-                  <HeaderAuth />
-                  <ThemeSwitcher />
-                </div>
-              </nav>
-              <div className="flex flex-col gap-20 max-w-5xl p-5">
-                {children}
+          <header>
+            <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
+              <div className="w-full max-w-7xl flex justify-between p-3 px-4 sm:px-6 lg:px-8 gap-5 text-sm">
+                <HeaderAuth />
               </div>
-
-              <footer className="w-full flex items-center justify-center mx-auto text-center text-xs gap-8 py-16"></footer>
-            </div>
+            </nav>
+          </header>
+          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div>{children}</div>
           </main>
         </ThemeProvider>
       </body>
