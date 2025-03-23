@@ -1,7 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { InfoIcon } from "lucide-react";
 import { redirect } from "next/navigation";
-import { Button } from "@/components/ui/button";
 
 export default async function ProtectedPage() {
   const supabase = await createClient();
@@ -15,9 +14,8 @@ export default async function ProtectedPage() {
   }
 
   return (
-    <div className="flex-1 w-full flex flex-row justify-between gap-12">
-      <div>Your Trips</div>
-      <Button>new trip</Button>
+    <div className="flex-1 w-full flex flex-col gap-12">
+      home page with summary
     </div>
   );
 }

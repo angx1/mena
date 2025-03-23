@@ -35,7 +35,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <header>
+          <header className="sticky top-0 z-50 bg-background">
             <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
               <div className="w-full max-w-7xl flex justify-between p-3 px-4 sm:px-6 lg:px-8 gap-5 text-sm">
                 <HeaderAuth />
