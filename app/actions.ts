@@ -46,7 +46,6 @@ export const signUpAction = async (formData: FormData) => {
     console.error(error.code + " " + error.message);
     return encodedRedirect("error", "/sign-up", error.message);
   } else {
-    console.log();
     return encodedRedirect(
       "success",
       "/sign-up",
@@ -141,7 +140,7 @@ export const signOutAction = async () => {
   return redirect("/");
 };
 
-export const fetchUserAction = async () => {
+export const getUserDataAction = async () => {
   const supabase = await createClient();
   const { data: user, error } = await supabase.auth.getUser();
 
@@ -168,4 +167,92 @@ export const fetchUserAction = async () => {
   return profile;
 };
 
-export const insertTripAction = async (formData: FormData) => {};
+export const createTripAction = async (tripData: {
+  name: string;
+  startDate: Date | undefined;
+  endDate: Date | undefined;
+  description: string;
+  location: {
+    name: string;
+    latitude: number;
+    longitude: number;
+  };
+}) => {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    console.error("User not authenticated");
+    return { error: "User not authenticated" };
+  }
+
+  const { data: existingLocation, error: locationError } = await supabase
+    .from("localizaciones")
+    .select("id")
+    .eq("nombre", tripData.location.name)
+    .single();
+
+  let locationId;
+
+  if (locationError && !existingLocation) {
+    const { data: newLocation, error: createLocationError } = await supabase
+      .from("localizaciones")
+      .insert([
+        {
+          nombre: tripData.location.name,
+          latitud: tripData.location.latitude,
+          longitud: tripData.location.longitude,
+        },
+      ])
+      .select()
+      .single();
+
+    if (createLocationError) {
+      console.error("Error creating location:", createLocationError);
+      return { error: "Failed to create location" };
+    }
+
+    locationId = newLocation.id;
+  } else {
+    locationId = existingLocation.id;
+  }
+
+  const { data: trip, error } = await supabase.from("viajes").insert([
+    {
+      nombre: tripData.name,
+      fecha_inicio: tripData.startDate,
+      fecha_fin: tripData.endDate,
+      descripcion: tripData.description,
+      usuario_id: user.id,
+      localizacion_id: locationId,
+    },
+  ]);
+  if (error) {
+    console.error(error.code + " " + error.message);
+    return { error: error.message };
+  }
+
+  return { success: true };
+};
+
+export const getUserTripsAction = async () => {
+  const supabase = await createClient();
+  const { data: user, error: userError } = await supabase.auth.getUser();
+  if (userError || !user) {
+    console.error("User not authenticated");
+    return { error: "User not authenticated" };
+  }
+  const { data: trips, error } = await supabase
+    .from("viajes")
+    .select("*")
+    .eq("usuario_id", user.user.id);
+  if (error) {
+    console.error(error.code + " " + error.message);
+    return { error: error.message };
+  }
+  return trips;
+};

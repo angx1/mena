@@ -52,7 +52,7 @@ const FeaturesHeader = () => {
                     transition={transition}
                     className={`flex items-center rounded-lg w-full ${
                       isSelected
-                        ? "bg-[#ff3c00] text-white"
+                        ? "bg-[var(--accent)] text-white"
                         : "text-muted-foreground hover:bg-muted hover:text-foreground"
                     }`}
                   >
