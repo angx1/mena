@@ -35,7 +35,7 @@ const FeaturesHeader = () => {
         <div className="flex items-center gap-3 border rounded-lg p-3">
           {config.routes.map((item) => {
             const IconComponent = item.icon;
-            const isSelected = pathname === item.href;
+            const isSelected = pathname.includes(item.href);
 
             return (
               <motion.div

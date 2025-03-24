@@ -28,7 +28,6 @@ export default function TripCard({
   fecha_fin,
   localizacion,
 }: TripCardProps) {
-  console.log(localizacion);
   const formattedStartDate = fecha_inicio
     ? format(new Date(fecha_inicio), "dd/MM/yyyy")
     : "Not specified";
