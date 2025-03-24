@@ -241,18 +241,39 @@ export const createTripAction = async (tripData: {
 
 export const getUserTripsAction = async () => {
   const supabase = await createClient();
-  const { data: user, error: userError } = await supabase.auth.getUser();
-  if (userError || !user) {
-    console.error("User not authenticated");
-    return { error: "User not authenticated" };
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return [];
   }
+
   const { data: trips, error } = await supabase
     .from("viajes")
-    .select("*")
-    .eq("usuario_id", user.user.id);
+    .select(
+      `
+      *,
+      localizaciones (
+        id,
+        nombre,
+        latitud,
+        longitud
+      )
+    `
+    )
+    .eq("usuario_id", user.id);
+
   if (error) {
-    console.error(error.code + " " + error.message);
-    return { error: error.message };
+    console.error("Error fetching trips:", error);
+    return [];
   }
-  return trips;
+
+  // Transform the data to match the expected structure
+  const transformedTrips = trips.map((trip) => ({
+    ...trip,
+    localizacion: trip.localizaciones,
+  }));
+
+  return transformedTrips;
 };

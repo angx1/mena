@@ -12,6 +12,12 @@ interface TripCardProps {
   fecha_fin: string;
   created_at: string;
   updated_at: string;
+  localizacion: {
+    id: string;
+    nombre: string;
+    latitud: number;
+    longitud: number;
+  };
 }
 
 export default function TripCard({
@@ -20,7 +26,9 @@ export default function TripCard({
   descripcion,
   fecha_inicio,
   fecha_fin,
+  localizacion,
 }: TripCardProps) {
+  console.log(localizacion);
   const formattedStartDate = fecha_inicio
     ? format(new Date(fecha_inicio), "dd/MM/yyyy")
     : "Not specified";
@@ -30,9 +38,9 @@ export default function TripCard({
     : "Not specified";
 
   return (
-    <Card className="hover:border-[var(--accent)] transition-colors duration-200 ease-in-out cursor-pointer">
+    <Card className="hover:border-[var(--accent)] transition-colors duration-200 ease-in-out cursor-pointer flex flex-col h-full">
       <CardHeader>
-        <Badge className="bg-gray-100 text-gray-800 w-fit hover:text-white mb-2">
+        <Badge className="bg-gray-100 hover:bg-[var(--accent)] text-gray-800 w-fit hover:text-white mb-2">
           id: {id.substring(0, 8)}
         </Badge>
         <div className="flex flex-col gap-2">
@@ -41,21 +49,23 @@ export default function TripCard({
           </span>
         </div>
         <div className="flex flex-col gap-2">
-          <span className="text-gray-500 text-sm font-mono">
-            {descripcion || "No description provided"}
+          <span className="text-gray-500 text-sm font-mono break-words">
+            {(descripcion && descripcion.length > 70
+              ? `${descripcion.substring(0, 70)}...`
+              : descripcion) || "No description provided"}
           </span>
         </div>
       </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        <div className="flex flex-col gap-2">
+      <CardContent className="mt-auto">
+        <div className="flex flex-col gap-2 mb-2">
           <span className="text-gray-700 font-mono text-xs">To:</span>
-          <span className="text-gray-700 font-mono text-sm">
-            location to be implemented
+          <span className="text-gray-700 font-mono font-bold text-sm">
+            {localizacion?.nombre || "Not specified"}
           </span>
         </div>
         <div className="flex flex-col gap-2">
-          <span className="text-gray-700 font-mono text-xs">Duraction:</span>
-          <span className="text-gray-700 font-mono text-sm">
+          <span className="text-gray-700 font-mono  text-xs">Duration:</span>
+          <span className="text-gray-700 font-mono font-bold text-sm">
             {formattedStartDate} - {formattedEndDate}
           </span>
         </div>

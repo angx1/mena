@@ -23,6 +23,12 @@ export default async function ProtectedPage() {
     fecha_fin: string;
     created_at: string;
     updated_at: string;
+    localizacion: {
+      id: string;
+      nombre: string;
+      latitud: number;
+      longitud: number;
+    };
     [key: string]: any;
   }[];
 
@@ -31,7 +37,7 @@ export default async function ProtectedPage() {
       <div className="flex-1 w-full flex flex-row justify-start gap-12">
         <NewTripButton />
       </div>
-      {(await userTrips).length === 0 ? (
+      {!userTrips || userTrips.length === 0 ? (
         <div className="flex items-center justify-center">
           <span className="text-gray-500 text-sm font-mono">
             No trips found, start by creating a new one.
@@ -49,6 +55,7 @@ export default async function ProtectedPage() {
               fecha_fin={trip.fecha_fin}
               created_at={trip.created_at}
               updated_at={trip.updated_at}
+              localizacion={trip.localizacion}
             />
           ))}
         </div>
