@@ -31,7 +31,6 @@ export default async function TripPage({
           {formattedStartDate} - {formattedEndDate}
         </span>
       </div>
-
       <div className="flex flex-col gap-2">
         <span className="text-2xl font-mono">{trip.nombre}</span>
         <span className="text-gray-500 text-lg font-mono">
