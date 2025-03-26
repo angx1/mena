@@ -277,3 +277,31 @@ export const getUserTripsAction = async () => {
 
   return transformedTrips;
 };
+
+export const getTripAction = async (tripId: string) => {
+  const supabase = await createClient();
+  const { data: trip, error } = await supabase
+    .from("viajes")
+    .select(
+      `
+      *,
+      localizaciones (
+        id,
+        nombre,
+        latitud,
+        longitud
+      )
+    `
+    )
+    .eq("id", tripId)
+    .single();
+  if (error) {
+    console.error("Error fetching trip:", error);
+    return null;
+  }
+  const transformedTrip = {
+    ...trip,
+    localizacion: trip.localizaciones,
+  };
+  return transformedTrip;
+};
