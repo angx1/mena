@@ -136,31 +136,10 @@ export default function NewTripButton() {
 
       <DialogContent>
         <DialogTitle>Your new Trip</DialogTitle>
-        <DialogDescription className="font-mono mb-4">
+        <DialogDescription className="font-mono mb-5">
           Fill up this information to register your new trip
         </DialogDescription>
         <form ref={formRef} className="flex-1 flex flex-col min-w-64 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="tripName">Trip title</Label>
-            <Input id="tripName" name="tripName" />
-          </div>
-
-          <div>
-            <label
-              htmlFor="description"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Trip description
-            </label>
-            <textarea
-              id="description"
-              name="description"
-              required
-              rows={4}
-              className="w-full px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition"
-            ></textarea>
-          </div>
-
           <LocationPicker
             onLocationSelect={handleLocationSelect}
             selectedLocation={selectedLocation}
@@ -169,7 +148,7 @@ export default function NewTripButton() {
             required={true}
           />
 
-          <div className="flex flex-row gap-3 justify-between">
+          <div className="flex flex-row gap-3 justify-between mb-3">
             <DatePicker
               label="Start date"
               selected={startDate}
@@ -195,7 +174,26 @@ export default function NewTripButton() {
               isEndDate={true}
             />
           </div>
+          <div className="space-y-2 mb-3">
+            <Label htmlFor="tripName">Trip title</Label>
+            <Input id="tripName" name="tripName" />
+          </div>
 
+          <div>
+            <label
+              htmlFor="description"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Trip description
+            </label>
+            <textarea
+              id="description"
+              name="description"
+              required
+              rows={4}
+              className="w-full px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition"
+            ></textarea>
+          </div>
           <SubmitButton
             pendingText="Creating trip..."
             formAction={handleSubmit}

@@ -64,7 +64,8 @@ export default function LocationPicker({
   return (
     <div className="space-y-2 mb-3">
       <Label htmlFor="location" className="flex items-center">
-        Location {required && <span className="text-red-500 ml-1">*</span>}
+        Where are you traveling to?{" "}
+        {required && <span className="text-red-500 ml-1">*</span>}
       </Label>
       <div className="relative">
         <div className="flex items-center">
