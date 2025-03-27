@@ -21,7 +21,7 @@ export default async function TripPage({
     : "Not specified";
 
   return (
-    <div className="flex flex-col gap-10">
+    <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-3">
         <div>
           <span className="font-mono text-xs text-grey-600">Trip to: </span>

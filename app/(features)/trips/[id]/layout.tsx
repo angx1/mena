@@ -13,7 +13,9 @@ export default function TripLayout({ children }: TripLayout) {
       <div className="flex flex-col">
         <div className="flex flex-row gap-20">
           <NavMenu />
-          <main className="flex justify-start">{children}</main>
+          <main className="flex-1 flex justify-start border rounded-lg m-4 p-8">
+            {children}
+          </main>
         </div>
       </div>
     </div>
