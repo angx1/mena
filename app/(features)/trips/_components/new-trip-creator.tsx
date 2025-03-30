@@ -6,6 +6,7 @@ import { createTripAction } from "@/app/actions";
 import { SubmitButton } from "@/components/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useRouter } from "next/navigation";
 
 import {
   Dialog,
@@ -21,6 +22,7 @@ import LocationPicker from "./location-picker";
 import DatePicker from "./date-picker";
 
 export default function NewTripButton() {
+  const router = useRouter();
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
   const [formError, setFormError] = useState<string | null>(null);
@@ -104,6 +106,7 @@ export default function NewTripButton() {
 
     resetForm();
     setOpen(false);
+    router.refresh(); // Refresh the route after creating the trip
   };
 
   const resetForm = () => {
