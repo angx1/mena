@@ -5,7 +5,24 @@ import TripCard from "./_components/trip-card";
 import { getUserTripsAction } from "@/app/actions";
 import Link from "next/link";
 
-export default async function ProtectedPage() {
+type Trip = {
+  id: string;
+  nombre: string;
+  descripcion: string;
+  fecha_inicio: string;
+  fecha_fin: string;
+  created_at: string;
+  updated_at: string;
+  localizacion: {
+    id: string;
+    nombre: string;
+    latitud: number;
+    longitud: number;
+  };
+  [key: string]: any;
+};
+
+export default async function TripsPage() {
   const supabase = await createClient();
 
   const {
@@ -16,22 +33,7 @@ export default async function ProtectedPage() {
     return redirect("/sign-in");
   }
 
-  const userTrips = (await getUserTripsAction()) as {
-    id: string;
-    nombre: string;
-    descripcion: string;
-    fecha_inicio: string;
-    fecha_fin: string;
-    created_at: string;
-    updated_at: string;
-    localizacion: {
-      id: string;
-      nombre: string;
-      latitud: number;
-      longitud: number;
-    };
-    [key: string]: any;
-  }[];
+  const userTrips = (await getUserTripsAction()) as Trip[];
 
   return (
     <div className="mx-auto flex flex-col w-full gap-8">

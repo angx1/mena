@@ -2,10 +2,11 @@
 
 import { Button } from "@/components/ui/button";
 import { CirclePlus, Utensils, Wrench, Home, Car, Package } from "lucide-react";
-import { createTripAction } from "@/app/actions";
+import { createExpenseAction } from "@/app/actions";
 import { SubmitButton } from "@/components/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useParams } from "next/navigation";
 import {
   Select,
   SelectContent,
@@ -51,6 +52,8 @@ const expenseCategories = [
 ];
 
 export default function NewExpenseButton() {
+  const params = useParams();
+  const tripId = params.id as string;
   const [open, setOpen] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
@@ -80,11 +83,23 @@ export default function NewExpenseButton() {
       type: selectedCategory,
       businessName: String(businessName),
       taxId: String(taxId),
+      viajeId: tripId,
     };
 
-    // await createExpenseAction(expenseData); // You'll need to create this action
-    resetForm();
-    setOpen(false);
+    try {
+      const result = await createExpenseAction(expenseData);
+
+      if (result?.error) {
+        setFormError(result.error);
+        return;
+      }
+
+      resetForm();
+      setOpen(false);
+    } catch (error) {
+      console.error("Error creating expense:", error);
+      setFormError("Failed to create expense. Please try again.");
+    }
   };
 
   const resetForm = () => {
@@ -105,7 +120,7 @@ export default function NewExpenseButton() {
       </DialogTrigger>
 
       <DialogContent>
-        <DialogTitle>New Expense</DialogTitle>
+        <DialogTitle>New Expense on trip</DialogTitle>
         <DialogDescription className="font-mono mb-5">
           Register a new expense
         </DialogDescription>

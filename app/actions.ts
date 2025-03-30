@@ -305,3 +305,106 @@ export const getTripAction = async (tripId: string) => {
   };
   return transformedTrip;
 };
+
+export const createExpenseAction = async (expenseData: {
+  amount: number;
+  currency: string;
+  type: string;
+  businessName: string;
+  taxId: string;
+  viajeId: string;
+}) => {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    console.error("User not authenticated");
+    return { error: "User not authenticated" };
+  }
+
+  const { data: existingBusiness, error: businessError } = await supabase
+    .from("comercios")
+    .select("id")
+    .eq("cuit_rfc_nit", expenseData.taxId)
+    .single();
+
+  let businessId;
+
+  if (businessError && !existingBusiness) {
+    const { data: newBusiness, error: createBusinessError } = await supabase
+      .from("comercios")
+      .insert([
+        {
+          nombre: expenseData.businessName,
+          cuit_rfc_nit: expenseData.taxId,
+        },
+      ])
+      .select()
+      .single();
+
+    if (createBusinessError) {
+      console.error("Error creating business:", createBusinessError);
+      return { error: "Failed to create business" };
+    }
+
+    businessId = newBusiness.id;
+  } else {
+    businessId = existingBusiness.id;
+  }
+
+  const { data, error } = await supabase
+    .from("gastos")
+    .insert([
+      {
+        viaje_id: expenseData.viajeId,
+        monto_total: expenseData.amount,
+        moneda: expenseData.currency,
+        usuario_id: user.id,
+        categoria: expenseData.type,
+        comercio_id: businessId,
+      },
+    ])
+    .select();
+
+  if (error) {
+    console.error("Error creating expense:", error);
+    return { error: "Failed to create expense" };
+  }
+
+  return { success: true };
+};
+
+export const getTripExpenses = async (tripId: string) => {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return [];
+  }
+
+  const { data: expenses, error } = await supabase
+    .from("gastos")
+    .select(
+      `
+      *,
+      comercios (
+        nombre,
+        cuit_rfc_nit
+      )
+    `
+    )
+    .eq("viaje_id", tripId);
+
+  if (error) {
+    console.error("Error fetching trips:", error);
+    return [];
+  }
+
+  return expenses;
+};
