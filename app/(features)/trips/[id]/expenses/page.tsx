@@ -1,7 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import NewExpenseButton from "../_components/new-expense-creator";
-import { getTripExpenses } from "@/app/actions";
 import ExpensesTable from "../_components/expenses-table";
 
 export default async function ProtectedPage({

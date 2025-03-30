@@ -1,5 +1,8 @@
 import { getTripAction } from "@/app/actions";
 import { format } from "date-fns";
+import { MapPin, Calendar } from "lucide-react";
+import NewExpenseButton from "./_components/new-expense-creator";
+
 export default async function TripPage({
   params,
 }: {
@@ -9,7 +12,11 @@ export default async function TripPage({
   const trip = await getTripAction(resolvedParams.id);
 
   if (!resolvedParams.id) {
-    return <div>Error: Trip id not found</div>;
+    return (
+      <div className="text-center py-4 text-red-500 text-sm">
+        Error: Trip id not found
+      </div>
+    );
   }
 
   const formattedStartDate = trip.fecha_inicio
@@ -21,21 +28,32 @@ export default async function TripPage({
     : "Not specified";
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-3">
-        <div>
-          <span className="font-mono text-xs text-grey-600">Trip to: </span>
-          <span>{trip.localizacion.nombre}</span>
+    <div className="w-full max-w-screen-md flex flex-col gap-6">
+      <div className="flex flex-col gap-1 max-w-full">
+        <h1 className="text-xl font-mono truncate">{trip.nombre}</h1>
+        <div className="w-full">
+          <p
+            className="text-muted-foreground text-sm font-mono break-words hyphens-auto"
+            style={{ wordWrap: "break-word", overflowWrap: "break-word" }}
+          >
+            {trip.descripcion}
+          </p>
         </div>
-        <span>
-          {formattedStartDate} - {formattedEndDate}
-        </span>
       </div>
-      <div className="flex flex-col gap-2">
-        <span className="text-2xl font-mono">{trip.nombre}</span>
-        <span className="text-gray-500 text-lg font-mono">
-          {trip.descripcion}
-        </span>
+
+      <div className="flex flex-row flex-wrap gap-4 text-xs">
+        <div className="flex items-center gap-1">
+          <MapPin className="h-3 w-3 text-muted-foreground" />
+          <span className="text-muted-foreground">
+            {trip.localizacion.nombre}
+          </span>
+        </div>
+        <div className="flex items-center gap-1">
+          <Calendar className="h-3 w-3 text-muted-foreground" />
+          <span className="text-muted-foreground">
+            {formattedStartDate} - {formattedEndDate}
+          </span>
+        </div>
       </div>
     </div>
   );

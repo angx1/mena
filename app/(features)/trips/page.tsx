@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 import NewTripButton from "./_components/new-trip-creator";
 import TripCard from "./_components/trip-card";
 import { getUserTripsAction } from "@/app/actions";
-import Link from "next/link";
 
 type Trip = {
   id: string;
@@ -49,18 +48,17 @@ export default async function TripsPage() {
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {userTrips.map((trip) => (
-            <Link key={trip.id} href={`/trips/${trip.id}`}>
-              <TripCard
-                id={trip.id}
-                nombre={trip.nombre}
-                descripcion={trip.descripcion}
-                fecha_inicio={trip.fecha_inicio}
-                fecha_fin={trip.fecha_fin}
-                created_at={trip.created_at}
-                updated_at={trip.updated_at}
-                localizacion={trip.localizacion}
-              />
-            </Link>
+            <TripCard
+              key={trip.id}
+              id={trip.id}
+              nombre={trip.nombre}
+              descripcion={trip.descripcion}
+              fecha_inicio={trip.fecha_inicio}
+              fecha_fin={trip.fecha_fin}
+              created_at={trip.created_at}
+              updated_at={trip.updated_at}
+              localizacion={trip.localizacion}
+            />
           ))}
         </div>
       )}

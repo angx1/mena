@@ -239,6 +239,44 @@ export const createTripAction = async (tripData: {
   return { success: true };
 };
 
+export const removeTripAction = async (tripId: string) => {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    console.error("User not authenticated");
+    return { error: "User not authenticated" };
+  }
+
+  const { data: trip, error: tripError } = await supabase
+    .from("viajes")
+    .select("*")
+    .eq("id", tripId)
+    .eq("usuario_id", user.id)
+    .single();
+
+  if (tripError || !trip) {
+    console.error("Trip not found or unauthorized");
+    return { error: "Trip not found or unauthorized" };
+  }
+
+  const { error: deleteError } = await supabase
+    .from("viajes")
+    .delete()
+    .eq("id", tripId);
+
+  if (deleteError) {
+    console.error(deleteError.code + " " + deleteError.message);
+    return { error: deleteError.message };
+  }
+
+  return { success: true };
+};
+
 export const getUserTripsAction = async () => {
   const supabase = await createClient();
   const {
