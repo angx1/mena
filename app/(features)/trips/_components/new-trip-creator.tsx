@@ -7,6 +7,7 @@ import { SubmitButton } from "@/components/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 import {
   Dialog,
@@ -102,11 +103,21 @@ export default function NewTripButton() {
       },
     };
 
-    await createTripAction(tripData);
+    try {
+      const result = await createTripAction(tripData);
 
-    resetForm();
-    setOpen(false);
-    router.refresh(); // Refresh the route after creating the trip
+      if (result?.error) {
+        toast.error(`Failed to create trip: ${result.error}`);
+      } else {
+        toast.success(`Trip "${tripData.name}" created successfully!`);
+        resetForm();
+        setOpen(false);
+        router.refresh();
+      }
+    } catch (error) {
+      console.error("Error creating trip:", error);
+      toast.error("Failed to create trip. Please try again.");
+    }
   };
 
   const resetForm = () => {

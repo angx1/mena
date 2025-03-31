@@ -2,6 +2,7 @@ import HeaderAuth from "@/components/header-auth";
 import FeaturesHeader from "@/components/features-header";
 import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
+import { Toaster } from "@/components/ui/sonner";
 
 import Link from "next/link";
 import "./globals.css";
@@ -45,6 +46,21 @@ export default function RootLayout({
           <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div>{children}</div>
           </main>
+          <Toaster
+            position="bottom-right"
+            toastOptions={{
+              style: {
+                background: "var(--accent)",
+                color: "white",
+                border: "1px solid var(--accent-foreground)",
+              },
+              classNames: {
+                success: "bg-green-600 text-white border-green-700",
+                error: "bg-red-600 text-white border-red-700",
+                info: "bg-blue-600 text-white border-blue-700",
+              },
+            }}
+          />
         </ThemeProvider>
       </body>
     </html>

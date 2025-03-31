@@ -28,7 +28,7 @@ export default async function TripPage({
     : "Not specified";
 
   return (
-    <div className="w-full max-w-screen-md flex flex-col gap-6">
+    <div className="w-full max-w-screen-md flex flex-col gap-10">
       <div className="flex flex-col gap-1 max-w-full">
         <h1 className="text-xl font-mono truncate">{trip.nombre}</h1>
         <div className="w-full">

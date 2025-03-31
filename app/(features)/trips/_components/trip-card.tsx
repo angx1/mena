@@ -6,6 +6,7 @@ import { Trash } from "lucide-react";
 import { useState } from "react";
 import { removeTripAction } from "@/app/actions";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import Link from "next/link";
 
 import {
@@ -71,10 +72,17 @@ export default function TripCard({
   const handleDelete = async () => {
     try {
       setIsDeleting(true);
-      await removeTripAction(id);
-      router.refresh();
+      const result = await removeTripAction(id);
+
+      if (result?.error) {
+        toast.error(`Failed to delete trip: ${result.error}`);
+      } else {
+        toast.success(`Trip "${nombre}" deleted successfully!`);
+        router.refresh();
+      }
     } catch (error) {
       console.error("Error deleting trip:", error);
+      toast.error("Failed to delete trip. Please try again.");
     } finally {
       setIsDeleting(false);
       setShowDeleteAlert(false);
