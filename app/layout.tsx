@@ -54,11 +54,6 @@ export default function RootLayout({
                 color: "white",
                 border: "1px solid var(--accent-foreground)",
               },
-              classNames: {
-                success: "bg-green-600 text-white border-green-700",
-                error: "bg-red-600 text-white border-red-700",
-                info: "bg-blue-600 text-white border-blue-700",
-              },
             }}
           />
         </ThemeProvider>
