@@ -447,7 +447,10 @@ export const getTripExpenses = async (tripId: string) => {
   return expenses;
 };
 
-export const createNoteAction = async (content: JSON, tripId: string) => {
+export const createNoteAction = async (
+  content: JSON | undefined,
+  tripId: string
+) => {
   const supabase = await createClient();
 
   const {
@@ -459,48 +462,103 @@ export const createNoteAction = async (content: JSON, tripId: string) => {
     console.error("User not authenticated");
     return { error: "User not authenticated" };
   }
-  const { data: existingNote, error: noteError } = await supabase
+
+  const { data: existingNote, error: checkError } = await supabase
     .from("notas")
     .select()
     .eq("viaje_id", tripId)
     .single();
 
-  if (noteError && noteError.code !== "PGRST116") {
-    console.error("Error checking existing note:", noteError);
-    return { error: "Failed to check existing note" };
+  if (checkError?.code !== "PGRST116") {
+    // PGRST116 means no rows returned
+    if (existingNote) {
+      console.log(existingNote.contenido);
+      return existingNote;
+    }
+    if (checkError) {
+      console.error("Error checking existing note:", checkError);
+      return { error: "Failed to check existing note" };
+    }
   }
 
-  if (existingNote) {
-    const { data, error: updateError } = await supabase
-      .from("notas")
-      .update({ contenido: content })
-      .eq("id", existingNote.id)
-      .select();
+  const { data, error: insertError } = await supabase
+    .from("notas")
+    .insert([
+      {
+        viaje_id: tripId,
+        usuario_id: user.id,
+        contenido: content,
+      },
+    ])
+    .select();
 
-    if (updateError) {
-      console.error("Error updating note:", updateError);
-      return { error: "Failed to update note" };
-    }
-  } else {
-    const { data, error: insertError } = await supabase
-      .from("notas")
-      .insert([
-        {
-          viaje_id: tripId,
-          usuario_id: user.id,
-          contenido: content,
-        },
-      ])
-      .select();
+  if (insertError) {
+    console.error("Error creating note:", insertError);
+    return { error: "Failed to create note" };
+  }
 
-    if (insertError) {
-      console.error("Error creating note:", insertError);
-      return { error: "Failed to create note" };
-    }
+  return data[0];
+};
+
+export const updateNoteAction = async (
+  noteId: string | null,
+  content: JSON
+) => {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    console.error("User not authenticated");
+    return { error: "User not authenticated" };
+  }
+  console.log("noteId", noteId);
+  const { data, error: updateError } = await supabase
+    .from("notas")
+    .update({
+      contenido: content,
+      temp: "prueba",
+    })
+    .eq("id", noteId)
+    .select();
+
+  if (updateError) {
+    console.error("Error updating note:", updateError);
+    return { error: "Failed to update note" };
+  }
+
+  return { success: true, data };
+};
+
+export const deleteNoteAction = async (noteId: string) => {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    console.error("User not authenticated");
+    return { error: "User not authenticated" };
+  }
+
+  const { error: deleteError } = await supabase
+    .from("notas")
+    .delete()
+    .eq("id", noteId);
+
+  if (deleteError) {
+    console.error("Error deleting note:", deleteError);
+    return { error: "Failed to delete note" };
   }
 
   return { success: true };
 };
+
 export const getTripNotes = async (tripId: string) => {
   const supabase = await createClient();
   const {
