@@ -1,6 +1,9 @@
 import { createClient } from "@/utils/supabase/server";
-import { InfoIcon } from "lucide-react";
 import { redirect } from "next/navigation";
+
+import AppearanceSettings from "./_components/appearance-settings";
+import AccountSettings from "./_components/account-settings";
+import ProfileSettings from "./_components/profile-settings";
 
 export default async function ProtectedPage() {
   const supabase = await createClient();
@@ -14,8 +17,18 @@ export default async function ProtectedPage() {
   }
 
   return (
-    <div className="flex-1 w-full flex flex-col gap-12">
-      this will be the app settings
+    <div className="w-full max-w-screen flex flex-col gap-10">
+      <section id="profile">
+        <ProfileSettings />
+      </section>
+
+      <section id="appearance">
+        <AppearanceSettings />
+      </section>
+
+      <section id="account">
+        <AccountSettings />
+      </section>
     </div>
   );
 }

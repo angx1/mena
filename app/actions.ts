@@ -68,7 +68,7 @@ export const signInAction = async (formData: FormData) => {
     return encodedRedirect("error", "/sign-in", error.message);
   }
 
-  return redirect("/home");
+  return redirect("/trips");
 };
 
 export const forgotPasswordAction = async (formData: FormData) => {
@@ -165,6 +165,71 @@ export const getUserDataAction = async () => {
   }
 
   return profile;
+};
+
+export const updateUserEmailAction = async (email: string) => {
+  const supabase = await createClient();
+  const { data: user, error } = await supabase.auth.updateUser({
+    email: email,
+  });
+
+  if (error || !user) {
+    console.error(error?.message || "User not found");
+    return encodedRedirect(
+      "error",
+      "/sign-in",
+      "Failed to fetch user information"
+    );
+  }
+
+  return encodedRedirect(
+    "success",
+    "/settings",
+    "Profile updated successfully"
+  );
+};
+
+export const updateUserDataAction = async (formData: FormData) => {
+  const nombre = formData.get("nombre")?.toString();
+  const apellidos = formData.get("apellidos")?.toString();
+  const empresa = formData.get("empresa")?.toString();
+
+  const supabase = await createClient();
+  const { data: user, error } = await supabase.auth.getUser();
+
+  if (error || !user) {
+    console.error(error?.message || "User not found");
+    return encodedRedirect(
+      "error",
+      "/sign-in",
+      "Failed to fetch user information"
+    );
+  }
+
+  const updateFields: any = {};
+
+  if (nombre) updateFields.nombre = nombre;
+  if (apellidos) updateFields.apellidos = apellidos;
+  if (empresa) updateFields.empresa = empresa;
+
+  const { error: updateError } =
+    Object.keys(updateFields).length > 0
+      ? await supabase
+          .from("profiles")
+          .update(updateFields)
+          .eq("id", user.user.id)
+      : { error: null };
+
+  if (updateError) {
+    console.error(updateError.message);
+    return encodedRedirect("error", "/settings", "Failed to update profile");
+  }
+
+  return encodedRedirect(
+    "success",
+    "/settings",
+    "Profile updated successfully"
+  );
 };
 
 export const createTripAction = async (tripData: {
