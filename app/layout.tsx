@@ -50,9 +50,9 @@ export default function RootLayout({
             position="bottom-right"
             toastOptions={{
               style: {
-                background: "var(--accent)",
-                color: "white",
-                border: "1px solid var(--accent-foreground)",
+                background: "white",
+                color: "black",
+                border: "1px solid var(--accent)",
               },
             }}
           />

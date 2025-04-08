@@ -51,7 +51,7 @@ export default function SettingsNavbar() {
   ];
 
   return (
-    <div className="flex flex-col gap-3">
+    <div>
       <nav className="flex flex-col space-y-1 border rounded-lg p-2">
         {navItems.map((item) => {
           const isActive = activeSection === item.id;

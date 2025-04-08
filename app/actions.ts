@@ -164,7 +164,10 @@ export const getUserDataAction = async () => {
     return encodedRedirect("error", "/", "Failed to fetch user profile");
   }
 
-  return profile;
+  return {
+    ...profile,
+    email_verified: user.user.user_metadata.email_verified,
+  };
 };
 
 export const updateUserEmailAction = async (email: string) => {
@@ -182,28 +185,29 @@ export const updateUserEmailAction = async (email: string) => {
     );
   }
 
-  return encodedRedirect(
-    "success",
-    "/settings",
-    "Profile updated successfully"
-  );
+  if (error) {
+    return { success: false, error: "Failed to update user's email" };
+  }
+
+  return { success: true, message: "User's email updated successfully" };
 };
 
-export const updateUserDataAction = async (formData: FormData) => {
-  const nombre = formData.get("nombre")?.toString();
-  const apellidos = formData.get("apellidos")?.toString();
-  const empresa = formData.get("empresa")?.toString();
+export const updateUserDataAction = async (formData: {
+  name: string;
+  surname: string;
+  companyName: string;
+  cif: string;
+}) => {
+  const nombre = formData.name;
+  const apellidos = formData.surname;
+  const empresa = formData.companyName;
 
   const supabase = await createClient();
   const { data: user, error } = await supabase.auth.getUser();
 
   if (error || !user) {
     console.error(error?.message || "User not found");
-    return encodedRedirect(
-      "error",
-      "/sign-in",
-      "Failed to fetch user information"
-    );
+    return { success: false, error: "Failed to fetch user information" };
   }
 
   const updateFields: any = {};
@@ -221,15 +225,10 @@ export const updateUserDataAction = async (formData: FormData) => {
       : { error: null };
 
   if (updateError) {
-    console.error(updateError.message);
-    return encodedRedirect("error", "/settings", "Failed to update profile");
+    return { success: false, error: "Failed to update profile" };
   }
 
-  return encodedRedirect(
-    "success",
-    "/settings",
-    "Profile updated successfully"
-  );
+  return { success: true, message: "Profile updated successfully" };
 };
 
 export const createTripAction = async (tripData: {
