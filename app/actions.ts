@@ -231,6 +231,10 @@ export const updateUserDataAction = async (formData: {
   return { success: true, message: "Profile updated successfully" };
 };
 
+export const deleteUserAction = async () => {
+  // TODO
+};
+
 export const createTripAction = async (tripData: {
   name: string;
   startDate: Date | undefined;

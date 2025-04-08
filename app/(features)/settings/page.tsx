@@ -29,7 +29,7 @@ export default async function ProtectedPage() {
       </section>
 
       <section id="account">
-        <AccountSettings />
+        <AccountSettings user={userData} />
       </section>
     </div>
   );

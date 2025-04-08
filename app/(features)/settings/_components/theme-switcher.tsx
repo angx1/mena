@@ -21,7 +21,7 @@ export function ModeToggle() {
         </div>
         <div className="border rounded-md p-3 w-fit border-[var(--accent)]">
           <p className="font-mono text-sm">
-            selected: <span className="font-bold">{selected} </span>
+            selected: <span className="font-bold text-sm">{selected} </span>
           </p>
         </div>
       </div>
