@@ -54,7 +54,6 @@ export default function SettingsNavbar() {
     <div>
       <nav className="flex flex-col space-y-1 border rounded-lg p-2">
         {navItems.map((item) => {
-          const isActive = activeSection === item.id;
           const IconComponent = item.icon;
 
           return (
@@ -65,10 +64,7 @@ export default function SettingsNavbar() {
                 e.preventDefault();
                 scrollToSection(item.id);
               }}
-              className={cn(
-                "justify-start flex items-center px-3 py-2 text-sm rounded-md transition-colors",
-                isActive ? "bg-secondary" : "hover:bg-accent"
-              )}
+              className="justify-start flex items-center px-3 py-2 text-sm rounded-md transition-colors hover:bg-gray-100"
             >
               {IconComponent && (
                 <span className="mr-2">
