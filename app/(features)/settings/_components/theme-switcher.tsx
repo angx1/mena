@@ -19,9 +19,12 @@ export function ModeToggle() {
           <h2 className="mr-8">Toggle theme</h2>
           <p className="font-mono text-sm">change the app's general theme</p>
         </div>
-        <div className="border rounded-md p-3 w-fit border-[var(--accent)]">
+        <div className="border rounded-lg p-3 w-fit">
           <p className="font-mono text-sm">
-            selected: <span className="font-bold text-sm">{selected} </span>
+            selected:{" "}
+            <span className="font-bold text-sm text-[var(--accent)]">
+              {selected}{" "}
+            </span>
           </p>
         </div>
       </div>
