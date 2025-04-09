@@ -18,16 +18,28 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
+
 import { useState, useRef } from "react";
 import LocationPicker from "./location-picker";
 import DatePicker from "./date-picker";
 
-export default function NewTripButton() {
+function TripCreationDialog({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
   const router = useRouter();
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
   const [formError, setFormError] = useState<string | null>(null);
-  const [open, setOpen] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
   const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
   const [locationData, setLocationData] = useState<{
@@ -52,11 +64,24 @@ export default function NewTripButton() {
     if (date) setFormError(null);
   };
 
+  const resetForm = () => {
+    setStartDate(undefined);
+    setEndDate(undefined);
+    setFormError(null);
+    setLocationError(null);
+    setSelectedLocation(null);
+    setLocationData(null);
+    setResetKey((prev) => prev + 1);
+    if (formRef.current) {
+      formRef.current.reset();
+    }
+  };
+
   const handleOpenChange = (newOpen: boolean) => {
     if (!newOpen) {
       resetForm();
     }
-    setOpen(newOpen);
+    onOpenChange(newOpen);
   };
 
   const handleSubmit = async (formData: FormData) => {
@@ -111,25 +136,12 @@ export default function NewTripButton() {
       } else {
         toast.success(`Trip "${tripData.name}" created successfully!`);
         resetForm();
-        setOpen(false);
+        onOpenChange(false);
         router.refresh();
       }
     } catch (error) {
       console.error("Error creating trip:", error);
       toast.error("Failed to create trip. Please try again.");
-    }
-  };
-
-  const resetForm = () => {
-    setStartDate(undefined);
-    setEndDate(undefined);
-    setFormError(null);
-    setLocationError(null);
-    setSelectedLocation(null);
-    setLocationData(null);
-    setResetKey((prev) => prev + 1);
-    if (formRef.current) {
-      formRef.current.reset();
     }
   };
 
@@ -141,13 +153,6 @@ export default function NewTripButton() {
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <Button>
-          <CirclePlus className="mr-2 h-4 w-4" />
-          new trip
-        </Button>
-      </DialogTrigger>
-
       <DialogContent>
         <DialogTitle>Your new Trip</DialogTitle>
         <DialogDescription className="font-mono mb-5">
@@ -218,5 +223,42 @@ export default function NewTripButton() {
         </form>
       </DialogContent>
     </Dialog>
+  );
+}
+
+export function NewTripContextMenu({ children }: { children: React.ReactNode }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <ContextMenu>
+        <ContextMenuTrigger className="w-full h-full cursor-default">
+          {children}
+        </ContextMenuTrigger>
+        <ContextMenuContent>
+          <ContextMenuItem onClick={() => setOpen(true)}>
+            <CirclePlus className="mr-2 h-4 w-4" />
+            New Trip
+          </ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenu>
+
+      <TripCreationDialog open={open} onOpenChange={setOpen} />
+    </>
+  );
+}
+
+export function NewTripButton() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <Button onClick={() => setOpen(true)}>
+        <CirclePlus className="mr-2 h-4 w-4" />
+        new trip
+      </Button>
+
+      <TripCreationDialog open={open} onOpenChange={setOpen} />
+    </>
   );
 }

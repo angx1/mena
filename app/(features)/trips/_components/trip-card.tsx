@@ -7,7 +7,6 @@ import { useState } from "react";
 import { removeTripAction } from "@/app/actions";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import Link from "next/link";
 
 import {
   ContextMenu,

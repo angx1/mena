@@ -1,6 +1,9 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
-import NewTripButton from "./_components/new-trip-creator";
+import {
+  NewTripButton,
+  NewTripContextMenu,
+} from "./_components/new-trip-creator";
 import TripCard from "./_components/trip-card";
 import { getUserTripsAction } from "@/app/actions";
 
@@ -35,33 +38,35 @@ export default async function TripsPage() {
   const userTrips = (await getUserTripsAction()) as Trip[];
 
   return (
-    <div className="mx-auto flex flex-col w-full gap-8">
-      <div className="flex-1 w-full flex flex-row justify-start gap-12">
-        <NewTripButton />
+    <NewTripContextMenu>
+      <div className="mx-auto flex flex-col w-full gap-8">
+        <div className="flex-1 w-full flex flex-row justify-start gap-12">
+          {/*<NewTripButton />*/}
+        </div>
+        {!userTrips || userTrips.length === 0 ? (
+          <div className="flex items-center justify-center h-[50vh] border border-dashed rounded-md">
+            <span className="text-gray-500 text-sm font-mono">
+              No trips found, start by creating a new one.
+            </span>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {userTrips.map((trip) => (
+              <TripCard
+                key={trip.id}
+                id={trip.id}
+                nombre={trip.nombre}
+                descripcion={trip.descripcion}
+                fecha_inicio={trip.fecha_inicio}
+                fecha_fin={trip.fecha_fin}
+                created_at={trip.created_at}
+                updated_at={trip.updated_at}
+                localizacion={trip.localizacion}
+              />
+            ))}
+          </div>
+        )}
       </div>
-      {!userTrips || userTrips.length === 0 ? (
-        <div className="flex items-center justify-center">
-          <span className="text-gray-500 text-sm font-mono">
-            No trips found, start by creating a new one.
-          </span>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {userTrips.map((trip) => (
-            <TripCard
-              key={trip.id}
-              id={trip.id}
-              nombre={trip.nombre}
-              descripcion={trip.descripcion}
-              fecha_inicio={trip.fecha_inicio}
-              fecha_fin={trip.fecha_fin}
-              created_at={trip.created_at}
-              updated_at={trip.updated_at}
-              localizacion={trip.localizacion}
-            />
-          ))}
-        </div>
-      )}
-    </div>
+    </NewTripContextMenu>
   );
 }
