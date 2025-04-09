@@ -28,7 +28,7 @@ export default function Generator() {
 
     try {
       //const result = await generateAnswer(input);
-      const result = await generateAnswer(input);
+      const result = await testAnswer(input);
       setAnswer(result);
     } catch (error) {
       console.error("Error getting answer:", error);
@@ -51,10 +51,27 @@ export default function Generator() {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
               className="whitespace-pre-wrap"
             >
-              {answer}
+              {answer.split("\n").map((line, lineIndex) => (
+                <div key={`line-${lineIndex}`}>
+                  {line.split(" ").map((word, wordIndex) => (
+                    <motion.span
+                      key={`${lineIndex}-${wordIndex}`}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{
+                        delay:
+                          (lineIndex * line.split(" ").length + wordIndex) *
+                          0.01,
+                      }}
+                    >
+                      {word}{" "}
+                    </motion.span>
+                  ))}
+                </div>
+              ))}
             </motion.div>
           ) : (
             <div className="text-gray-400 text-center h-full flex items-center justify-center font-mono text-sm">
@@ -86,7 +103,7 @@ export default function Generator() {
           >
             {isLoading ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="mr-2 h-4 w-4 animate-spin [animation-duration:2s]" />
                 Thinking...
               </>
             ) : (

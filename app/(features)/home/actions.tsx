@@ -40,6 +40,9 @@ export async function generateAnswer(prompt: string) {
 }
 
 export async function testAnswer(prompt: string) {
+  // Simulate 2 second delay
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
   return (
     "This is an extensive test answer that demonstrates a longer response format. " +
     "I am providing multiple paragraphs of text to show how a lengthy response would look. " +
@@ -47,13 +50,6 @@ export async function testAnswer(prompt: string) {
     "\n\n" +
     "The purpose of this test answer is to simulate real-world scenarios where responses " +
     "might contain substantial amounts of information, detailed explanations, or complex " +
-    "instructions that span multiple lines and paragraphs. " +
-    "\n\n" +
-    "By including this much text, we can better evaluate how the application handles " +
-    "text wrapping, line breaks, and overall layout management. " +
-    "Feel free to modify this test answer as needed for your specific testing purposes. " +
-    "\n\n" +
-    "This final paragraph serves to conclude our test response and ensure we have " +
-    "sufficient content to properly test long-form text display capabilities."
+    "instructions that span multiple lines and paragraphs. "
   );
 }
