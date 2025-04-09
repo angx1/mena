@@ -384,6 +384,39 @@ export const getUserTripsAction = async () => {
   return transformedTrips;
 };
 
+export const getNumberOfUserTripsAction = async () => {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { count: 0, trips: [] };
+  }
+
+  const {
+    data: trips,
+    count,
+    error,
+  } = await supabase
+    .from("viajes")
+    .select("*, localizaciones (*)", { count: "exact" })
+    .eq("usuario_id", user.id);
+
+  if (error) {
+    console.error("Error fetching trips and count:", error);
+    return { count: 0, trips: [] };
+  }
+
+  // Transform the data to match the expected structure
+  const transformedTrips = trips.map((trip) => ({
+    ...trip,
+    localizacion: trip.localizaciones,
+  }));
+
+  return { count: count || 0, trips: transformedTrips };
+};
+
 export const getTripAction = async (tripId: string) => {
   const supabase = await createClient();
   const { data: trip, error } = await supabase

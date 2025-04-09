@@ -1,5 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
+import Generator from "./_components/generator";
 
 export default async function ProtectedPage() {
   const supabase = await createClient();
@@ -12,5 +13,9 @@ export default async function ProtectedPage() {
     return redirect("/sign-in");
   }
 
-  return <div className="flex-1 w-full flex flex-col gap-12"></div>;
+  return (
+    <div className="flex-1 w-full flex flex-col gap-12">
+      <Generator />
+    </div>
+  );
 }

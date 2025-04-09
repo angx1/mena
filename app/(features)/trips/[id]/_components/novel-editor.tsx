@@ -9,9 +9,26 @@ import {
   updateNoteAction,
   createNoteAction,
 } from "@/app/actions";
-import { debounce } from "lodash";
+
 import { Loader2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+
+function useDebounce<T extends (...args: any[]) => any>(
+  callback: T,
+  delay: number
+) {
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  return (...args: Parameters<T>) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    timeoutRef.current = setTimeout(() => {
+      callback(...args);
+    }, delay);
+  };
+}
 
 export default function NoteEditor() {
   const params = useParams();
@@ -53,7 +70,7 @@ export default function NoteEditor() {
     }
   }, [tripId]);
 
-  const debouncedSave = debounce(async (content: JSONContent) => {
+  const debouncedSave = useDebounce(async (content: JSONContent) => {
     if (!noteId) return;
 
     try {
