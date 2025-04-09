@@ -4,8 +4,10 @@ import { Button } from "@/components/ui/button";
 import { useState, useRef } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2 } from "lucide-react";
-import { generateAnswer } from "../actions";
-import { EditorContent, EditorRoot, JSONContent } from "novel";
+import { generateAnswer, testAnswer } from "../actions";
+import { EditorContent, EditorRoot, JSONContent } from "novel"; // TODO
+import { Skeleton } from "@/components/ui/skeleton";
+import { motion } from "framer-motion";
 
 export default function Generator() {
   const [answer, setAnswer] = useState("");
@@ -25,6 +27,7 @@ export default function Generator() {
     setAnswer("");
 
     try {
+      //const result = await generateAnswer(input);
       const result = await generateAnswer(input);
       setAnswer(result);
     } catch (error) {
@@ -33,6 +36,7 @@ export default function Generator() {
     } finally {
       setIsLoading(false);
     }
+    setInput("");
   };
 
   return (
@@ -41,23 +45,38 @@ export default function Generator() {
         <div ref={responseRef} className="p-4">
           {isLoading ? (
             <div className="flex items-center justify-center h-full">
-              <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
+              <Skeleton className="w-full h-10 animate-pulse" />
             </div>
           ) : answer ? (
-            <div className="whitespace-pre-wrap">{answer}</div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+              className="whitespace-pre-wrap"
+            >
+              {answer}
+            </motion.div>
           ) : (
-            <div className="text-gray-400 text-center h-full flex items-center justify-center">
-              Ask a question to get started
+            <div className="text-gray-400 text-center h-full flex items-center justify-center font-mono text-sm">
+              Ask me anything about your trips
             </div>
           )}
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+        <motion.form
+          onSubmit={handleSubmit}
+          className="flex flex-col gap-5"
+          layout
+          transition={{
+            duration: 0.3,
+            ease: "easeInOut",
+          }}
+        >
           <Textarea
             value={input}
             onChange={handleInputChange}
-            placeholder="Ask me anything about your trips..."
-            className="resize-none"
+            placeholder="I would like to know..."
+            className="resize-none font-mono text-sm"
             rows={3}
           />
           <Button
@@ -74,7 +93,7 @@ export default function Generator() {
               "Send"
             )}
           </Button>
-        </form>
+        </motion.form>
       </div>
     </div>
   );
