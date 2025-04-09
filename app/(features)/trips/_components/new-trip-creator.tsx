@@ -88,12 +88,12 @@ function TripCreationDialog({
     let hasError = false;
 
     if (!startDate) {
-      setFormError("Please select a start date");
+      setFormError("Please select a valid date range");
       hasError = true;
     }
 
     if (!endDate) {
-      setFormError("Please select an end date");
+      setFormError("Please select a valid date range");
       hasError = true;
     }
 
@@ -195,6 +195,7 @@ function TripCreationDialog({
           </div>
           <div className="space-y-2 mb-3">
             <Label htmlFor="tripName">Trip title</Label>
+            <span className="text-red-500 ml-1">*</span>
             <Input id="tripName" name="tripName" />
           </div>
 
@@ -208,7 +209,6 @@ function TripCreationDialog({
             <textarea
               id="description"
               name="description"
-              required
               rows={4}
               className="w-full px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition"
             ></textarea>
@@ -226,7 +226,11 @@ function TripCreationDialog({
   );
 }
 
-export function NewTripContextMenu({ children }: { children: React.ReactNode }) {
+export function NewTripContextMenu({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [open, setOpen] = useState(false);
 
   return (
