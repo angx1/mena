@@ -93,7 +93,7 @@ export default function Generator() {
             value={input}
             onChange={handleInputChange}
             placeholder="I would like to know..."
-            className="resize-none font-mono text-sm"
+            className="resize-none font-mono text-sm rounded-xl p-5"
             rows={3}
           />
           <Button
