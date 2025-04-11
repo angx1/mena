@@ -6,7 +6,7 @@ import { useTheme } from "next-themes";
 
 import { Button } from "@/components/ui/button";
 
-const ICON_SIZE = 32;
+const ICON_SIZE = 20;
 
 export function ModeToggle() {
   const { setTheme } = useTheme();
