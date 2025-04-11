@@ -14,9 +14,20 @@ export default function Generator() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const responseRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // command + enter
+    if (e.metaKey && e.key === "Enter") {
+      e.preventDefault();
+      if (input.trim() && !isLoading) {
+        handleSubmit(e as unknown as React.FormEvent);
+      }
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -82,7 +93,7 @@ export default function Generator() {
 
         <motion.form
           onSubmit={handleSubmit}
-          className="flex flex-col gap-5"
+          className="flex flex-col gap-5 relative"
           layout
           transition={{
             duration: 0.3,
@@ -90,26 +101,30 @@ export default function Generator() {
           }}
         >
           <Textarea
+            ref={textareaRef}
             value={input}
             onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
             placeholder="I would like to know..."
-            className="resize-none font-mono text-sm rounded-xl p-5"
+            className="resize-none font-mono text-sm rounded-xl p-5 pr-24"
             rows={3}
           />
-          <Button
-            type="submit"
-            disabled={isLoading || !input.trim()}
-            className="self-end"
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin [animation-duration:2s]" />
-                Thinking...
-              </>
-            ) : (
-              "Send"
-            )}
-          </Button>
+          <div className="absolute bottom-3 right-3">
+            <Button
+              type="submit"
+              disabled={isLoading || !input.trim()}
+              size="sm"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin [animation-duration:2s]" />
+                  Thinking...
+                </>
+              ) : (
+                "Send ⌘ ↵"
+              )}
+            </Button>
+          </div>
         </motion.form>
       </div>
     </div>
