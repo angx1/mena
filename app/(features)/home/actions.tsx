@@ -3,7 +3,12 @@
 import { createOpenAI } from "@ai-sdk/openai";
 import { generateText, streamText, tool } from "ai";
 import { z } from "zod";
-import { getNumberOfUserTripsAction } from "@/app/actions";
+import {
+  getNumberOfUserTripsAction,
+  getUserTripsAction,
+  getExpenses,
+  getNotesAction,
+} from "@/app/actions";
 
 const openai = createOpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -14,13 +19,32 @@ export async function generateAnswer(prompt: string) {
     const { text: answer } = await generateText({
       model: openai.chat("gpt-4o-mini"),
       tools: {
-        calculate: tool({
+        getNumberOfTrips: tool({
           description:
             "A tool to get the total number of trips the" +
             "user has and the information of each trip",
 
           parameters: z.object({ expression: z.string() }),
           execute: async () => getNumberOfUserTripsAction(),
+        }),
+        getTrips: tool({
+          description:
+            "A tool to get the information of each and every single trip",
+
+          parameters: z.object({ expression: z.string() }),
+          execute: async () => getUserTripsAction(),
+        }),
+        getExpenses: tool({
+          description: "A tool to get all the expenses" + "of each trip ",
+
+          parameters: z.object({ expression: z.string() }),
+          execute: async () => getExpenses(),
+        }),
+        getTripNotes: tool({
+          description: "A tool to get the notes" + "of each trip ",
+
+          parameters: z.object({ expression: z.string() }),
+          execute: async () => getNotesAction(),
         }),
       },
       maxSteps: 5,
@@ -29,7 +53,7 @@ export async function generateAnswer(prompt: string) {
         "Reason step by step. " +
         "Use the server actions to get the information. " +
         "When you give the final answer, " +
-        "provide a clear answer for the user to easily understand.",
+        "provide a clear and direct answer for the user to easily understand.",
 
       prompt: prompt,
     });

@@ -38,8 +38,8 @@ export default function Generator() {
     setAnswer("");
 
     try {
-      //const result = await generateAnswer(input);
-      const result = await testAnswer(input);
+      const result = await generateAnswer(input);
+      //const result = await testAnswer(input);
       setAnswer(result);
     } catch (error) {
       console.error("Error getting answer:", error);

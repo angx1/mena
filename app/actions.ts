@@ -4,6 +4,7 @@ import { encodedRedirect } from "@/utils/utils";
 import { createClient } from "@/utils/supabase/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { countReset } from "console";
 
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
@@ -409,12 +410,13 @@ export const getNumberOfUserTripsAction = async () => {
   }
 
   // Transform the data to match the expected structure
-  const transformedTrips = trips.map((trip) => ({
+  /*const transformedTrips = trips.map((trip) => ({
     ...trip,
     localizacion: trip.localizaciones,
   }));
 
-  return { count: count || 0, trips: transformedTrips };
+  return { count: count || 0, trips: transformedTrips };*/
+  return count;
 };
 
 export const getTripAction = async (tripId: string) => {
@@ -548,6 +550,39 @@ export const getTripExpenses = async (tripId: string) => {
   return expenses;
 };
 
+export const getExpenses = async () => {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return [];
+  }
+
+  const { data: expenses, error } = await supabase.from("gastos").select(`
+      *,
+      comercios (
+        nombre,
+        cuit_rfc_nit
+      ),
+      viajes (
+        id,
+        nombre,
+        fecha_inicio,
+        fecha_fin,
+        descripcion
+      )
+    `);
+
+  if (error) {
+    console.error("Error fetching expenses:", error);
+    return [];
+  }
+
+  return expenses;
+};
+
 export const createNoteAction = async (
   content: JSON | undefined,
   tripId: string
@@ -599,6 +634,35 @@ export const createNoteAction = async (
   }
 
   return data[0];
+};
+
+export const getNotesAction = async () => {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return [];
+  }
+
+  const { data: notes, error } = await supabase.from("notas").select(`
+      *,
+      viajes (
+        id,
+        nombre,
+        fecha_inicio,
+        fecha_fin,
+        descripcion
+      )
+    `);
+
+  if (error) {
+    console.error("Error fetching notes:", error);
+    return [];
+  }
+
+  return notes;
 };
 
 export const updateNoteAction = async (
