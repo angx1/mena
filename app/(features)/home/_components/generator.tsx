@@ -21,7 +21,6 @@ export default function Generator() {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    // command + enter
     if (e.metaKey && e.key === "Enter") {
       e.preventDefault();
       if (input.trim() && !isLoading) {
@@ -39,7 +38,7 @@ export default function Generator() {
 
     try {
       const result = await generateAnswer(input);
-      //const result = await testAnswer(input);
+
       setAnswer(result);
     } catch (error) {
       console.error("Error getting answer:", error);
@@ -85,7 +84,7 @@ export default function Generator() {
               ))}
             </motion.div>
           ) : (
-            <div className="text-gray-400 text-center h-full flex items-center justify-center font-mono text-sm">
+            <div className="text-gray-400 text-center h-full flex items-center justify-center font-mono text-xl">
               Ask me anything about your trips
             </div>
           )}
@@ -103,11 +102,16 @@ export default function Generator() {
           <Textarea
             ref={textareaRef}
             value={input}
-            onChange={handleInputChange}
+            onChange={(e) => {
+              handleInputChange(e);
+
+              e.target.style.height = "auto";
+              e.target.style.height = `${e.target.scrollHeight}px`;
+            }}
             onKeyDown={handleKeyDown}
             placeholder="I would like to know..."
-            className="resize-none font-mono text-sm rounded-xl p-5 pr-24"
-            rows={3}
+            className="resize-none font-mono text-sm rounded-xl p-5 pr-24 min-h-[80px]"
+            rows={1}
           />
           <div className="absolute bottom-3 right-3">
             <Button
@@ -126,6 +130,16 @@ export default function Generator() {
             </Button>
           </div>
         </motion.form>
+        {/*
+        <div className="flex gap-4">
+          <Button variant="outline" className="w-fit">
+            "Tell me how many trips I have next month"
+          </Button>
+          <Button variant="outline" className="w-fit">
+            "Tell me the total expenses I have done this month"
+          </Button>
+        </div>
+        */}
       </div>
     </div>
   );
