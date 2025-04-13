@@ -62,9 +62,7 @@ export default function ExpensesTable() {
 
   return (
     <Table>
-      <TableCaption className="mt-10">
-        A list of your trip expenses.
-      </TableCaption>
+      <TableCaption>A list of your trip expenses.</TableCaption>
       <TableHeader>
         <TableRow>
           <TableHead>Business</TableHead>
