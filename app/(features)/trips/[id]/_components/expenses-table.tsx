@@ -54,9 +54,17 @@ export default function ExpensesTable() {
     );
   }
 
+  const total = tripExpenses.reduce(
+    (sum, expense) => sum + expense.monto_total,
+    0
+  );
+  const currency = tripExpenses[0]?.moneda || "";
+
   return (
     <Table>
-      <TableCaption>A list of your trip expenses.</TableCaption>
+      <TableCaption className="mt-10">
+        A list of your trip expenses.
+      </TableCaption>
       <TableHeader>
         <TableRow>
           <TableHead>Business</TableHead>
@@ -77,6 +85,14 @@ export default function ExpensesTable() {
           </TableRow>
         ))}
       </TableBody>
+      <TableFooter className="border rounded-md mt-3">
+        <TableRow>
+          <TableCell colSpan={2}>TOTAL</TableCell>
+          <TableCell className="text-right">
+            {total} {currency}
+          </TableCell>
+        </TableRow>
+      </TableFooter>
     </Table>
   );
 }
